@@ -3,14 +3,29 @@ import {createFFmpeg} from '@ffmpeg/ffmpeg'
 
 const vender_version = '1663764183'
 GlobalWorkerOptions.workerSrc = `/v${vender_version}/pdf.worker.min.js`
+let y_size = 720
+let input_file = 'result.pdf'
 const output_file = 'result.webm'
 const output_mime = 'video/webm'
-const ffmpeg_args = ['-y', '-pattern_type', 'glob', '-r', '1/2', '-i', 'page*.png', '-c:v', 'libvpx', '-pix_fmt', 'yuv420p', output_file]
+const quality = () => {
+  switch(document.getElementById("quality").value) {
+    case 'best':
+      return ['-crf', '4', '-b:v', '0', '-quality', 'best', '-speed', '4']
+    default:
+      return []
+  }
+}
+const dl_filename = () => `${input_file.replace(/\.[^.]+$/, '')}.${y_size}p.webm`
+const ffmpeg_args = () => ['-y', '-pattern_type', 'glob', '-r', '1/2', '-i', 'page*.png', '-c:v', 'libvpx', ...quality(), '-pix_fmt', 'yuv420p', output_file]
 
 const r = document.getElementById("resolution")
 const f = document.getElementById("file")
+const q = document.getElementById("quality")
 const ires = document.getElementById("input_resolution")
 const ores = document.getElementById("output_resolution")
+const runBtn = document.getElementById("run")
+const progress = document.getElementById("progress")
+const logtext = document.getElementById("logtext")
 
 // pdf object
 let pdf = null;
@@ -57,6 +72,8 @@ async function check_pdf(file_node){
     ires.innerText = 'N/A'
     return
   }
+  input_file = file.name
+  logtext.innerHTML = `[pdf] ${file.name}\n`
   const fileData = await readFileAsync(file)
   // PDFファイルのパース
   pdf = await getDocument({
@@ -71,6 +88,11 @@ async function check_pdf(file_node){
   width = viewport.width
   height = viewport.height
   ires.innerText = format_res(width, height)
+
+  // progress init
+  progress.value = 0
+  progress.innerHTML = ''
+  runBtn.removeAttribute('disabled')
 }
 
 async function calc_resolusion() {
@@ -96,6 +118,7 @@ async function calc_resolusion() {
   default:
     scale = 1
   }
+  y_size = Math.round(height*scale)
   ores.innerText = format_res(width*scale, height*scale)
 }
 
@@ -126,14 +149,7 @@ async function pdfToPNG(page, canvas) {
 
   // レンダリング結果をPNG化
   const base64 = canvas.toDataURL('image/png')
-  const tmp = base64.split(',')
-  const binstr = atob(tmp[1])
-  const len = binstr.length
-  const buf = new Uint8Array(len)
-  for (let i = 0; i < len; i++) {
-    buf[i] = binstr.charCodeAt(i)
-  }
-  return buf
+  return Uint8Array.from(Array.prototype.map.call(atob(base64.split(',')[1]), x => x.charCodeAt(0)))
 }
 
 async function pdfToPNGList(ffmpeg) {
@@ -159,7 +175,7 @@ function downloadLink(data){
   const a = document.createElement('a')
   a.style = 'display: none'
   a.href = url
-  a.download = output_file
+  a.download = dl_filename()
   document.body.appendChild(a)
   a.click()
   a.remove()
@@ -170,13 +186,30 @@ const ffmpeg = createFFmpeg({
   log: true,
   corePath: `/v${vender_version}/ffmpeg-core.js`,
 })
+ffmpeg.setLogger(({type, message}) => {
+  logtext.innerHTML += `[${type}] ${message}\n`
+  logtext.scroll(0, logtext.scrollHeight);
+})
+ffmpeg.setProgress(({ratio}) => {
+  logtext.innerHTML += `[progress] ${(ratio * 100).toFixed(2)}% done\n`
+  logtext.scroll(0, logtext.scrollHeight);
+  progress.value = ratio
+  progress.innerHTML = `${(ratio * 100).toFixed(2)}% done`
+})
 const loadwait = ffmpeg.load()
 
 async function run() {
+  // form disable
+  r.setAttribute('disabled', '')
+  f.setAttribute('disabled', '')
+  q.setAttribute('disabled', '')
+  runBtn.setAttribute('disabled', '')
   // ffmpegの立ち上げ完了を待つ
+  progress.innerHTML = ''
+  progress.removeAttribute('value')
   await loadwait
   const numPages = await pdfToPNGList(ffmpeg)
-  await ffmpeg.run(...ffmpeg_args)
+  await ffmpeg.run(...ffmpeg_args())
   const result = ffmpeg.FS('readFile', output_file)
   downloadLink(result)
   // cleanup fs
@@ -185,8 +218,14 @@ async function run() {
     const num = `00${i}`.slice(-3)
     ffmpeg.FS("unlink", `page${num}.png`)
   }
+  // form enable
+  r.removeAttribute('disabled')
+  f.removeAttribute('disabled')
+  q.removeAttribute('disabled')
+  runBtn.removeAttribute('disabled')
 }
 
 f.addEventListener("change", e => check_pdf(e.target).then(calc_resolusion))
 r.addEventListener("change", calc_resolusion)
-document.getElementById("run").addEventListener('click', (e) => run())
+runBtn.setAttribute('disabled', '')
+runBtn.addEventListener('click', _ => run())
