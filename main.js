@@ -5,7 +5,7 @@ const vender_version = '1663764183'
 GlobalWorkerOptions.workerSrc = `/v${vender_version}/pdf.worker.min.js`
 const output_file = 'result.webm'
 const output_mime = 'video/webm'
-const ffmpeg_args = ['-y', '-pattern_type', 'glob', '-r', '1/2', '-i', 'page*.png', '-r', '30', '-c:v', 'libvpx', '-pix_fmt', 'yuv420p', output_file]
+const ffmpeg_args = ['-y', '-pattern_type', 'glob', '-r', '1/2', '-i', 'page*.png', '-c:v', 'libvpx', '-pix_fmt', 'yuv420p', output_file]
 
 const r = document.getElementById("resolution")
 const f = document.getElementById("file")
