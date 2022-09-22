@@ -168,7 +168,6 @@ function downloadLink(data){
 // ページ読み込み時にffmpegの立ち上げる
 const ffmpeg = createFFmpeg({
   log: true,
-  mainName: "main",
   corePath: `/v${vender_version}/ffmpeg-core.js`,
 })
 const loadwait = ffmpeg.load()
