@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^3.0.7"
+    "vite": "^3.0.7",
+    "vite-plugin-cross-origin-isolation": "^0.1.6"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.11.5",
