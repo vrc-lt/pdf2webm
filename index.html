@@ -22,7 +22,14 @@
         <option value="1440">1440p</option>
         <option value="2160">2160p</option>
       </select>
+      <label for="quality">品質</label>
+      <select name="quality" id="quality">
+        <option value="normal" selected>normal</option>
+        <option value="best">best</option>
+      </select>
     </p>
     <div><input name="run" id="run" type="button" value="変換開始"/></div>
+    <div><progress name="progress" id="progress" value="0" style="width:360px"></progress></div>
+    <div><textarea name="logtext" id="logtext" cols="104" rows="10" readonly></textarea></div>
   </body>
 </html>
