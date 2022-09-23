@@ -10,7 +10,7 @@ const output_mime = 'video/webm'
 const quality = () => {
   switch(document.getElementById("quality").value) {
     case 'best':
-      return ['-crf', '4', '-b:v', '0', '-quality', 'best', '-speed', '4']
+      return ['-crf', '4', '-b:v', '5000000', '-quality', 'best', '-speed', '4']
     default:
       return []
   }
