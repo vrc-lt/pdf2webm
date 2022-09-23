@@ -184,7 +184,7 @@ function downloadLink(data){
 // ページ読み込み時にffmpegの立ち上げる
 const ffmpeg = createFFmpeg({
   log: true,
-  corePath: `/v${vender_version}/ffmpeg-core.js`,
+  corePath: `/v1663896933/ffmpeg-core.js`,
 })
 ffmpeg.setLogger(({type, message}) => {
   logtext.innerHTML += `[${type}] ${message}\n`
