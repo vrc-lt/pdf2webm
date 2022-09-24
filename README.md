@@ -20,6 +20,15 @@ npm run build
 npm run dev
 ```
 
+## Deployment
+
+cloudflare pagesによるデプロイに対応しています。build後の`dist/`以下をwranglerを用いてアップロードしてください
+
+```
+set 
+wrangler pages dist
+```
+
 ## LICENSE
 
 [LICENSE](LICENSE) を参照ください。
