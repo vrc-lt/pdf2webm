@@ -5,6 +5,7 @@ const vender_version = '1663764183'
 GlobalWorkerOptions.workerSrc = `/v${vender_version}/pdf.worker.min.js`
 let y_size = 720
 let input_file = 'result.pdf'
+let log_text = ''
 const output_file = 'result.webm'
 const output_mime = 'video/webm'
 const quality = () => {
@@ -73,7 +74,8 @@ async function check_pdf(file_node){
     return
   }
   input_file = file.name
-  logtext.innerHTML = `[pdf] ${file.name}\n`
+  log_text = `[pdf] ${file.name}\n`
+  logtext.value = log_text
   const fileData = await readFileAsync(file)
   // PDFファイルのパース
   pdf = await getDocument({
@@ -91,7 +93,7 @@ async function check_pdf(file_node){
 
   // progress init
   progress.value = 0
-  progress.innerHTML = ''
+  progress.innerText = ''
   runBtn.removeAttribute('disabled')
 }
 
@@ -187,14 +189,16 @@ const ffmpeg = createFFmpeg({
   corePath: `/v1663896933/ffmpeg-core.js`,
 })
 ffmpeg.setLogger(({type, message}) => {
-  logtext.innerHTML += `[${type}] ${message}\n`
+  log_text += `[${type}] ${message}\n`
+  logtext.value = log_text
   logtext.scroll(0, logtext.scrollHeight);
 })
 ffmpeg.setProgress(({ratio}) => {
-  logtext.innerHTML += `[progress] ${(ratio * 100).toFixed(2)}% done\n`
+  log_text += `[progress] ${(ratio * 100).toFixed(2)}% done\n`
+  logtext.value = log_text
   logtext.scroll(0, logtext.scrollHeight);
   progress.value = ratio
-  progress.innerHTML = `${(ratio * 100).toFixed(2)}% done`
+  progress.innerText = `${(ratio * 100).toFixed(2)}% done`
 })
 const loadwait = ffmpeg.load()
 
@@ -205,7 +209,7 @@ async function run() {
   q.setAttribute('disabled', '')
   runBtn.setAttribute('disabled', '')
   // ffmpegの立ち上げ完了を待つ
-  progress.innerHTML = ''
+  progress.innerText = ''
   progress.removeAttribute('value')
   await loadwait
   const numPages = await pdfToPNGList(ffmpeg)
