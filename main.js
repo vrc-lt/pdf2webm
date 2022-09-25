@@ -10,10 +10,12 @@ const output_file = 'result.webm'
 const output_mime = 'video/webm'
 const quality = () => {
   switch(document.getElementById("quality").value) {
+    case 'low':
+      return []
     case 'best':
       return ['-crf', '4', '-b:v', '5000000', '-quality', 'best', '-speed', '4']
     default:
-      return []
+      return ['-crf', '4', '-b:v', '5000000']
   }
 }
 const dl_filename = () => `${input_file.replace(/\.[^.]+$/, '')}.${y_size}p.webm`
