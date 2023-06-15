@@ -6,8 +6,9 @@ GlobalWorkerOptions.workerSrc = `/v${vender_version}/pdf.worker.min.js`
 let y_size = 720
 let input_file = 'result.pdf'
 let log_text = ''
-const output_file = 'result.webm'
-const output_mime = 'video/webm'
+const format = document.getElementById("format")
+const output_file = () => `result.${format.value}`
+const output_mime = () => `video/${format.value}`
 const quality = () => {
   switch(document.getElementById("quality").value) {
     case 'low':
@@ -18,8 +19,9 @@ const quality = () => {
       return ['-crf', '4', '-b:v', '5000000']
   }
 }
-const dl_filename = () => `${input_file.replace(/\.[^.]+$/, '')}.${y_size}p.webm`
-const ffmpeg_args = () => ['-y', '-pattern_type', 'glob', '-r', '1/2', '-i', 'page*.png', '-c:v', 'libvpx', ...quality(), '-pix_fmt', 'yuv420p', output_file]
+const dl_filename = () => `${input_file.replace(/\.[^.]+$/, '')}.${y_size}p.${format.value}`
+const encode_args = () => format.value == 'mp4'? ['-c:v', 'libx264', '-r', '30']: ['-c:v', 'libvpx', ...quality(),]
+const ffmpeg_args = () => ['-y', '-pattern_type', 'glob', '-r', '1/2', '-i', 'page*.png', ...encode_args(), '-pix_fmt', 'yuv420p', output_file()]
 
 const r = document.getElementById("resolution")
 const f = document.getElementById("file")
@@ -174,7 +176,7 @@ async function pdfToPNGList(ffmpeg) {
 }
 
 function downloadLink(data){
-  const blob = new Blob([data], {type: output_mime})
+  const blob = new Blob([data], {type: output_mime()})
   const url = window.URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.style = 'display: none'
@@ -209,6 +211,7 @@ async function run() {
   r.setAttribute('disabled', '')
   f.setAttribute('disabled', '')
   q.setAttribute('disabled', '')
+  format.setAttribute('disabled', '')
   runBtn.setAttribute('disabled', '')
   // ffmpegの立ち上げ完了を待つ
   progress.innerText = ''
@@ -216,10 +219,10 @@ async function run() {
   await loadwait
   const numPages = await pdfToPNGList(ffmpeg)
   await ffmpeg.run(...ffmpeg_args())
-  const result = ffmpeg.FS('readFile', output_file)
+  const result = ffmpeg.FS('readFile', output_file())
   downloadLink(result)
   // cleanup fs
-  ffmpeg.FS("unlink", output_file)
+  ffmpeg.FS("unlink", output_file())
   for(let i = 0; i < numPages; i++){
     const num = `00${i}`.slice(-3)
     ffmpeg.FS("unlink", `page${num}.png`)
@@ -228,6 +231,7 @@ async function run() {
   r.removeAttribute('disabled')
   f.removeAttribute('disabled')
   q.removeAttribute('disabled')
+  format.removeAttribute('disabled')
   runBtn.removeAttribute('disabled')
 }
 
