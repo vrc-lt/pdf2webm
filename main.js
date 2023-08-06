@@ -1,5 +1,5 @@
 import {getDocument, GlobalWorkerOptions} from 'pdfjs-dist'
-import {createFFmpeg} from '@ffmpeg/ffmpeg'
+import {FFmpeg} from '@ffmpeg/ffmpeg'
 
 const vender_version = '1663764183'
 GlobalWorkerOptions.workerSrc = `/v${vender_version}/pdf.worker.min.js`
@@ -169,7 +169,7 @@ async function pdfToPNGList(ffmpeg) {
     const page = await pdf.getPage(i+1)
     const data = await pdfToPNG(page, canvas)
     const num = `00${i}`.slice(-3)
-    ffmpeg.FS("writeFile", `page${num}.png`, data)
+    await ffmpeg.writeFile(`page${num}.png`, data)
   }
   canvas.remove()
   return numPages
@@ -188,23 +188,23 @@ function downloadLink(data){
 }
 
 // ページ読み込み時にffmpegの立ち上げる
-const ffmpeg = createFFmpeg({
-  log: true,
-  corePath: `/v1686837282/ffmpeg-core.js`,
-})
-ffmpeg.setLogger(({type, message}) => {
+const ffmpeg = new FFmpeg()
+ffmpeg.on("log", ({type, message}) => {
   log_text += `[${type}] ${message}\n`
   logtext.value = log_text
   logtext.scroll(0, logtext.scrollHeight);
 })
-ffmpeg.setProgress(({ratio}) => {
-  log_text += `[progress] ${(ratio * 100).toFixed(2)}% done\n`
+ffmpeg.on("progress", (d) => {
+  log_text += `[progress] ${(d.progress * 100).toFixed(2)}% done\n`
   logtext.value = log_text
   logtext.scroll(0, logtext.scrollHeight);
-  progress.value = ratio
-  progress.innerText = `${(ratio * 100).toFixed(2)}% done`
+  progress.value = d.progress;
+  progress.innerText = `${(d.progress * 100).toFixed(2)}% done`
 })
-const loadwait = ffmpeg.load()
+const loadwait = ffmpeg.load({
+  log: true,
+  coreURL: `/v1691295723/ffmpeg-core.js`,
+})
 
 async function run() {
   // form disable
@@ -218,14 +218,14 @@ async function run() {
   progress.removeAttribute('value')
   await loadwait
   const numPages = await pdfToPNGList(ffmpeg)
-  await ffmpeg.run(...ffmpeg_args())
-  const result = ffmpeg.FS('readFile', output_file())
+  await ffmpeg.exec(ffmpeg_args())
+  const result = await ffmpeg.readFile(output_file())
   downloadLink(result)
   // cleanup fs
-  ffmpeg.FS("unlink", output_file())
+  ffmpeg.deleteFile(output_file())
   for(let i = 0; i < numPages; i++){
     const num = `00${i}`.slice(-3)
-    ffmpeg.FS("unlink", `page${num}.png`)
+    ffmpeg.deleteFile(`page${num}.png`)
   }
   // form enable
   r.removeAttribute('disabled')
