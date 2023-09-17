@@ -9,11 +9,10 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^3.2.7",
-    "vite-plugin-cross-origin-isolation": "^0.1.6"
+    "vite": "^3.2.7"
   },
   "dependencies": {
-    "@ffmpeg/ffmpeg": "^0.12.2",
+    "@ffmpeg/ffmpeg": "^0.12.6",
     "pdfjs-dist": "^2.16.105"
   }
 }
