@@ -203,7 +203,7 @@ ffmpeg.on("progress", (d) => {
 })
 const loadwait = ffmpeg.load({
   log: true,
-  coreURL: `/v1691295723/ffmpeg-core.js`,
+  coreURL: `/v1694948356/ffmpeg-core.js`,
 })
 
 async function run() {
