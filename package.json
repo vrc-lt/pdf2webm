@@ -13,6 +13,6 @@
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.6",
-    "pdfjs-dist": "^2.16.105"
+    "pdfjs-dist": "^3.10.111"
   }
 }
