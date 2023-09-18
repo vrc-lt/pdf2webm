@@ -1,8 +1,9 @@
-import {getDocument, GlobalWorkerOptions} from 'pdfjs-dist'
+import {getDocument, GlobalWorkerOptions} from 'pdfjs-dist/build/pdf'
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min?url'
 import {FFmpeg} from '@ffmpeg/ffmpeg'
 
 const vender_version = '1663764183'
-GlobalWorkerOptions.workerSrc = `/v${vender_version}/pdf.worker.min.js`
+GlobalWorkerOptions.workerSrc = pdfjsWorker
 let y_size = 720
 let input_file = 'result.pdf'
 let log_text = ''
