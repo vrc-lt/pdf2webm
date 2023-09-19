@@ -16,7 +16,7 @@
       <label for="format">フォーマット</label>
       <select name="format" id="format">
         <option value="webm">WebM</option>
-        <option value="mp4">MP4</option>
+        <option value="mp4" selected>MP4</option>
       </select>
       <label for="resolution">倍率</label>
       <select name="resolution" id="resolution">
@@ -36,6 +36,7 @@
     </p>
     <div><input name="run" id="run" type="button" value="変換開始"/></div>
     <div><progress name="progress" id="progress" value="0" style="width:360px"></progress></div>
+    <label for="logtext">log</label>
     <div><textarea name="logtext" id="logtext" cols="104" rows="10" readonly></textarea></div>
   </body>
 </html>
