@@ -8,6 +8,7 @@ let y_size = 720
 let input_file = 'result.pdf'
 let log_text = ''
 const format = document.getElementById("format")
+const interval = document.getElementById("interval")
 const output_file = () => `result.${format.value}`
 const output_mime = () => `video/${format.value}`
 const quality = () => {
@@ -20,9 +21,15 @@ const quality = () => {
       return ['-crf', '4', '-b:v', '5000000']
   }
 }
-const dl_filename = () => `${input_file.replace(/\.[^.]+$/, '')}.${y_size}p.${format.value}`
+const dl_filename = () => `${input_file.replace(/\.[^.]+$/, '')}.${y_size}p.t${interval.value}.${format.value}`
 const encode_args = () => format.value == 'mp4'? ['-c:v', 'libx264', '-r', '30']: ['-c:v', 'libvpx', ...quality(),]
-const ffmpeg_args = () => ['-y', '-pattern_type', 'glob', '-r', '1/2', '-i', 'page*.png', ...encode_args(), '-pix_fmt', 'yuv420p', output_file()]
+const framerate = () => {
+  switch(interval.value) {
+    case '1': return '1'
+    case '2': return '1/2'
+  }
+}
+const ffmpeg_args = () => ['-y', '-pattern_type', 'glob', '-r', framerate(), '-i', 'page*.png', ...encode_args(), '-pix_fmt', 'yuv420p', output_file()]
 
 const r = document.getElementById("resolution")
 const f = document.getElementById("file")
