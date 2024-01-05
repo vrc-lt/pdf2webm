@@ -12,13 +12,15 @@
     <p>本サービスはWebブラウザ上でPDFをMP4あるいはWebM動画に変換するサービスです。</p>
     <div><label for="file">PDFファイルを指定してください</label><input name="file" id="file" type="file" accept="application/pdf" /></div>
     <p>PDFの解像度は<span id="input_resolution">N/A</span>です。</p>
-    <p>
-      出力動画の解像度は<span id="output_resolution">N/A</span>です。
+    <p>出力動画の解像度は<span id="output_resolution">N/A</span>です。</p>
+    <div>
       <label for="format">フォーマット</label>
       <select name="format" id="format">
         <option value="webm">WebM</option>
         <option value="mp4" selected>MP4</option>
       </select>
+    </div>
+    <div>
       <label for="resolution">倍率</label>
       <select name="resolution" id="resolution">
         <option value="original">1倍</option>
@@ -28,13 +30,22 @@
         <option value="1440">1440p</option>
         <option value="2160">2160p</option>
       </select>
+    </div>
+    <div>
       <label for="quality">品質</label>
       <select name="quality" id="quality">
         <option value="low">low</option>
         <option value="normal" selected>normal</option>
         <option value="best">best</option>
       </select>
-    </p>
+    </div>
+    <div>
+      <label for="interval">ページ送り間隔</label>
+      <select name="interval" id="interval">
+        <option value="1">1秒 UnaSlides向け</option>
+        <option value="2" selected>2秒 VRC-LT向け</option>
+      </select>
+    </div>
     <div><input name="run" id="run" type="button" value="変換開始"/></div>
     <div><progress name="progress" id="progress" value="0" style="width:360px"></progress></div>
     <label for="logtext">log</label>
