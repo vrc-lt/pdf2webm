@@ -187,10 +187,8 @@ function downloadLink(data){
   const blob = new Blob([data], {type: output_mime()})
   const url = window.URL.createObjectURL(blob)
   const a = document.createElement('a')
-  a.style = 'display: none'
   a.href = url
   a.download = dl_filename()
-  document.body.appendChild(a)
   a.click()
   a.remove()
 }

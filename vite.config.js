@@ -1,4 +1,7 @@
 export default {
+    build: {
+      target: 'esnext'
+    },
     server: {
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',
