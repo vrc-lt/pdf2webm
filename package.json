@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^5.4.12"
+    "vite": "^6.2.5"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.6",
