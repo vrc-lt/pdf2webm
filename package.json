@@ -9,10 +9,10 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^6.2.7"
+    "vite": "^7.0.0"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.6",
-    "pdfjs-dist": "^4.0.379"
+    "pdfjs-dist": "^5.3.31"
   }
 }
