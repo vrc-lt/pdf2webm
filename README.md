@@ -8,7 +8,7 @@ pdf.jsとffmpeg.wasmを用いてPDFからWebMをブラウザ上で変換する�
 
 以下のコマンドにより`dist/`以下にファイルが生成されます。
 ```bash
-npm run build
+pnpm run build
 ```
 
 成果物をWebサイトとして公開することで利用できます。
@@ -17,7 +17,7 @@ npm run build
 [Vite](https://vitejs.dev/)を用いて開発しています。以下のコマンドで開発サーバーを立ち上げられます。
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ## Deployment
